@@ -156,7 +156,7 @@ const HomeScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <Header title="Home" />
+      <Header title="RSA Digital" />
 
       <ScrollView
         style={styles.content}
