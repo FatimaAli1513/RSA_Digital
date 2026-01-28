@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "RSA_Digital",
+    "name": "RSA Digital",
     "slug": "RSA_Digital",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -13,7 +13,8 @@
       "backgroundColor": "#0D1B2A"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.rsadigital.app"
     },
     "android": {
       "adaptiveIcon": {
@@ -22,7 +23,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.RSA_Digital"
+      "package": "com.rsadigital.app"
     },
     "web": {
       "favicon": "./assets/favicon.png"
