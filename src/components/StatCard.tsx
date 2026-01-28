@@ -11,7 +11,7 @@ interface StatCardProps {
 const StatCard: React.FC<StatCardProps> = ({ 
   value, 
   label, 
-  backgroundColor = COLORS.gray100 
+  backgroundColor = COLORS.cardBackground 
 }) => {
   return (
     <View style={[styles.container, { backgroundColor }]}>
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: SIZES.caption,
-    color: COLORS.gray500,
+    color: COLORS.gray600,
   },
 });
 

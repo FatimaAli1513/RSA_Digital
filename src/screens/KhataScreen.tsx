@@ -194,12 +194,12 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: SIZES.h3,
     fontWeight: '600',
-    color: COLORS.gray500,
+    color: COLORS.white,
     marginBottom: 8,
   },
   emptySubtext: {
     fontSize: SIZES.body,
-    color: COLORS.gray400,
+    color: COLORS.gray300,
   },
 });
 

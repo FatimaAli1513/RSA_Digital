@@ -52,7 +52,7 @@ const CustomerCard: React.FC<CustomerCardProps> = ({ customer, onPress }) => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.cardBackground,
     borderRadius: SIZES.radius,
     padding: SIZES.padding,
     marginHorizontal: SIZES.padding,
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: COLORS.primary,
+    backgroundColor: COLORS.cardBlue,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -80,12 +80,12 @@ const styles = StyleSheet.create({
   name: {
     fontSize: SIZES.h4,
     fontWeight: '600',
-    color: COLORS.gray800,
+    color: COLORS.white,
     marginBottom: 4,
   },
   phone: {
     fontSize: SIZES.body,
-    color: COLORS.gray500,
+    color: COLORS.gray300,
   },
   balanceContainer: {
     alignItems: 'flex-end',

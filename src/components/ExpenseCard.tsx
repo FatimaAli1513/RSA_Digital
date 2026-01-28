@@ -31,10 +31,10 @@ const getCategoryColor = (category: string): string => {
     'Bills': COLORS.cardPurple,
     'Entertainment': COLORS.cardGreen,
     'Health': COLORS.cardRed,
-    'Education': COLORS.primary,
-    'Other': COLORS.gray500,
+    'Education': COLORS.info,
+    'Other': COLORS.gray400,
   };
-  return colors[category] || COLORS.gray500;
+  return colors[category] || COLORS.gray400;
 };
 
 const formatCurrency = (amount: number): string => {
@@ -80,7 +80,7 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({ expense, onPress }) => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.cardBackground,
     borderRadius: SIZES.radius,
     padding: SIZES.padding,
     marginHorizontal: SIZES.padding,
@@ -102,12 +102,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: SIZES.h4,
     fontWeight: '600',
-    color: COLORS.gray800,
+    color: COLORS.white,
     marginBottom: 2,
   },
   category: {
     fontSize: SIZES.caption,
-    color: COLORS.gray500,
+    color: COLORS.gray300,
     marginBottom: 2,
   },
   date: {

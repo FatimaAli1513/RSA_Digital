@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: SIZES.h3,
     fontWeight: 'bold',
-    color: COLORS.gray800,
+    color: COLORS.white,
     marginHorizontal: SIZES.padding,
     marginBottom: 12,
   },
@@ -179,13 +179,13 @@ const styles = StyleSheet.create({
   },
   viewAll: {
     fontSize: SIZES.body,
-    color: COLORS.primary,
+    color: COLORS.primaryLight,
     fontWeight: '600',
   },
   activityCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.cardBackground,
     marginHorizontal: SIZES.padding,
     marginBottom: 10,
     padding: SIZES.padding,
@@ -206,12 +206,12 @@ const styles = StyleSheet.create({
   activityTitle: {
     fontSize: SIZES.h4,
     fontWeight: '600',
-    color: COLORS.gray800,
+    color: COLORS.white,
     marginBottom: 2,
   },
   activityTime: {
     fontSize: SIZES.caption,
-    color: COLORS.gray400,
+    color: COLORS.gray300,
   },
   bottomPadding: {
     height: 40,

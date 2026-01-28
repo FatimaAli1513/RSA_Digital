@@ -36,7 +36,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
           accessibilityLabel="Filter"
           accessibilityRole="button"
         >
-          <Ionicons name="options-outline" size={22} color={COLORS.gray600} />
+          <Ionicons name="options-outline" size={22} color={COLORS.white} />
         </TouchableOpacity>
       )}
     </View>
@@ -55,12 +55,12 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.cardBackground,
     borderRadius: SIZES.radius,
     paddingHorizontal: 12,
     height: 48,
     borderWidth: 1,
-    borderColor: COLORS.gray200,
+    borderColor: 'rgba(255,255,255,0.1)',
     ...SHADOWS.light,
   },
   icon: {
@@ -69,17 +69,17 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: SIZES.body,
-    color: COLORS.gray800,
+    color: COLORS.white,
   },
   filterButton: {
     width: 48,
     height: 48,
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.cardBackground,
     borderRadius: SIZES.radius,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: COLORS.gray200,
+    borderColor: 'rgba(255,255,255,0.1)',
     ...SHADOWS.light,
   },
 });

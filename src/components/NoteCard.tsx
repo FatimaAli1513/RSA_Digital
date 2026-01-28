@@ -31,7 +31,7 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, onPress }) => {
       accessibilityRole="button"
     >
       <View style={styles.iconContainer}>
-        <Ionicons name="document-text-outline" size={24} color={COLORS.primary} />
+        <Ionicons name="document-text-outline" size={24} color={COLORS.cardBlue} />
       </View>
       <View style={styles.content}>
         <Text style={styles.title} numberOfLines={1}>{note.title}</Text>
@@ -48,7 +48,7 @@ const NoteCard: React.FC<NoteCardProps> = ({ note, onPress }) => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.cardBackground,
     borderRadius: SIZES.radius,
     padding: SIZES.padding,
     marginHorizontal: SIZES.padding,
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: `${COLORS.primary}15`,
+    backgroundColor: 'rgba(59, 130, 246, 0.25)',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -71,12 +71,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: SIZES.h4,
     fontWeight: '600',
-    color: COLORS.gray800,
+    color: COLORS.white,
     marginBottom: 4,
   },
   description: {
     fontSize: SIZES.body,
-    color: COLORS.gray500,
+    color: COLORS.gray300,
     marginBottom: 6,
   },
   timeContainer: {

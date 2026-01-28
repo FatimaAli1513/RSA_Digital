@@ -1,13 +1,13 @@
-// Theme Colors - You can adjust these as needed
+// Theme Colors - RSA Digital Dark Navy Blue Theme
 export const COLORS = {
-  // Primary Purple Theme
-  primary: '#7C3AED',
-  primaryLight: '#A78BFA',
-  primaryDark: '#5B21B6',
+  // Primary Navy Blue Theme
+  primary: '#0D1B2A',
+  primaryLight: '#1B3A5C',
+  primaryDark: '#061018',
   
   // Gradient Colors
-  gradientStart: '#8B5CF6',
-  gradientEnd: '#A855F7',
+  gradientStart: '#0D1B2A',
+  gradientEnd: '#1B3A5C',
   
   // Card Colors
   cardPurple: '#9333EA',
@@ -30,8 +30,8 @@ export const COLORS = {
   gray800: '#1F2937',
   
   // Background
-  background: '#F5F5F5',
-  cardBackground: '#FFFFFF',
+  background: '#0D1B2A',
+  cardBackground: '#152840',
   
   // Status Colors
   success: '#22C55E',
