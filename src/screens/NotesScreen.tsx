@@ -1,10 +1,11 @@
-import React, { useState, useMemo } from 'react';
-import { View, StyleSheet, FlatList, Text } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import { View, StyleSheet, FlatList, Text, ActivityIndicator } from 'react-native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Header, SearchBar, NoteCard, FAB } from '../components';
+import { Header, SearchBar, NoteCard, FAB, AddNoteModal } from '../components';
 import { COLORS, SIZES } from '../constants/theme';
 import { Note } from '../types';
+import { getNotes, addNote } from '../utils/storage';
 
 type RootStackParamList = {
   Home: undefined;
@@ -15,48 +16,12 @@ type RootStackParamList = {
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-// Generate sample notes
-const generateSampleNotes = (): Note[] => {
-  const titles = [
-    'Task List', 'Monthly Review', 'Ideas', 'To Do List', 
-    'Daily Reminder', 'Reminders', 'Meeting Notes', 'Project Plan',
-    'Shopping List', 'Goals'
-  ];
-  const descriptions = [
-    'Notes from the conference call.',
-    'Quick note about today\'s activities.',
-    'This is a sample note description with important details.',
-    'Project planning and ideas.',
-    'Personal reminders and tasks.',
-    'Quick notes for future reference.',
-    'Important points from the meeting.',
-    'Planning for the upcoming project.',
-    'Items to buy from the market.',
-    'Goals for this month.',
-  ];
-  
-  const notes: Note[] = [];
-  for (let i = 0; i < 100; i++) {
-    const randomDays = Math.floor(Math.random() * 30);
-    const date = new Date();
-    date.setDate(date.getDate() - randomDays);
-    
-    notes.push({
-      id: `note-${i}`,
-      title: `${titles[i % titles.length]} ${Math.floor(Math.random() * 100)}`,
-      description: descriptions[i % descriptions.length],
-      createdAt: date,
-      updatedAt: date,
-    });
-  }
-  
-  return notes.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
-};
-
 const NotesScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
   const [searchQuery, setSearchQuery] = useState('');
-  const [notes] = useState<Note[]>(generateSampleNotes());
+  const [notes, setNotes] = useState<Note[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const currentDate = new Date().toLocaleDateString('en-US', {
     weekday: 'long',
@@ -64,6 +29,19 @@ const NotesScreen: React.FC = () => {
     month: 'short',
     year: 'numeric',
   });
+
+  const loadNotes = useCallback(async () => {
+    setIsLoading(true);
+    const storedNotes = await getNotes();
+    setNotes(storedNotes);
+    setIsLoading(false);
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadNotes();
+    }, [loadNotes])
+  );
 
   const filteredNotes = useMemo(() => {
     if (!searchQuery.trim()) return notes;
@@ -80,7 +58,12 @@ const NotesScreen: React.FC = () => {
   };
 
   const handleAddNote = () => {
-    console.log('Add note pressed');
+    setIsModalVisible(true);
+  };
+
+  const handleSaveNote = async (title: string, description: string) => {
+    const newNote = await addNote({ title, description });
+    setNotes((prev) => [newNote, ...prev]);
   };
 
   const handleFilter = () => {
@@ -102,16 +85,32 @@ const NotesScreen: React.FC = () => {
     </View>
   );
 
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <Header
+          title="Notes"
+          subtitle={currentDate}
+          showBack={true}
+          onBackPress={handleBackPress}
+        />
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={COLORS.cardBlue} />
+        </View>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
-      <Header 
-        title="Notes" 
-        subtitle={currentDate} 
+      <Header
+        title="Notes"
+        subtitle={currentDate}
         count={filteredNotes.length}
         showBack={true}
         onBackPress={handleBackPress}
       />
-      
+
       <SearchBar
         value={searchQuery}
         onChangeText={setSearchQuery}
@@ -129,6 +128,12 @@ const NotesScreen: React.FC = () => {
       />
 
       <FAB onPress={handleAddNote} />
+
+      <AddNoteModal
+        visible={isModalVisible}
+        onClose={() => setIsModalVisible(false)}
+        onSave={handleSaveNote}
+      />
     </View>
   );
 };
@@ -138,8 +143,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   listContent: {
     paddingBottom: 120,
+    flexGrow: 1,
   },
   emptyContainer: {
     flex: 1,

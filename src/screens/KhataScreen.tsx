@@ -1,10 +1,11 @@
-import React, { useState, useMemo } from 'react';
-import { View, StyleSheet, FlatList, Text } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React, { useState, useMemo, useCallback } from 'react';
+import { View, StyleSheet, FlatList, Text, ActivityIndicator } from 'react-native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Header, SearchBar, CustomerCard, FAB } from '../components';
+import { Header, SearchBar, CustomerCard, FAB, AddCustomerModal } from '../components';
 import { COLORS, SIZES } from '../constants/theme';
 import { Customer } from '../types';
+import { getCustomers, addCustomer } from '../utils/storage';
 
 type RootStackParamList = {
   Home: undefined;
@@ -15,38 +16,12 @@ type RootStackParamList = {
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-// Generate sample customers
-const generateSampleCustomers = (): Customer[] => {
-  const names = [
-    'Ahmed Khan', 'Muhammad Ali', 'Fatima Hassan', 'Zainab Malik',
-    'Usman Rashid', 'Ayesha Siddiqui', 'Hassan Ahmed', 'Sara Khan',
-    'Bilal Hussain', 'Amina Sheikh', 'Omar Farooq', 'Hira Nawaz',
-    'Imran Qureshi', 'Sana Iqbal', 'Kamran Aslam', 'Maryam Bukhari',
-  ];
-  
-  const customers: Customer[] = [];
-  for (let i = 0; i < 100; i++) {
-    const balance = Math.floor(Math.random() * 100000) - 50000;
-    const date = new Date();
-    date.setDate(date.getDate() - Math.floor(Math.random() * 365));
-    
-    customers.push({
-      id: `customer-${i}`,
-      name: names[i % names.length],
-      phone: `03${Math.floor(Math.random() * 10)}${Math.floor(Math.random() * 10000000).toString().padStart(8, '0')}`,
-      balance,
-      transactions: [],
-      createdAt: date,
-    });
-  }
-  
-  return customers.sort((a, b) => a.name.localeCompare(b.name));
-};
-
 const KhataScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
   const [searchQuery, setSearchQuery] = useState('');
-  const [customers] = useState<Customer[]>(generateSampleCustomers());
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const currentDate = new Date().toLocaleDateString('en-US', {
     weekday: 'long',
@@ -54,6 +29,19 @@ const KhataScreen: React.FC = () => {
     month: 'short',
     year: 'numeric',
   });
+
+  const loadCustomers = useCallback(async () => {
+    setIsLoading(true);
+    const storedCustomers = await getCustomers();
+    setCustomers(storedCustomers);
+    setIsLoading(false);
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadCustomers();
+    }, [loadCustomers])
+  );
 
   const filteredCustomers = useMemo(() => {
     if (!searchQuery.trim()) return customers;
@@ -82,7 +70,12 @@ const KhataScreen: React.FC = () => {
   };
 
   const handleAddCustomer = () => {
-    console.log('Add customer pressed');
+    setIsModalVisible(true);
+  };
+
+  const handleSaveCustomer = async (name: string, phone: string, balance: number) => {
+    const newCustomer = await addCustomer({ name, phone, balance });
+    setCustomers((prev) => [newCustomer, ...prev]);
   };
 
   const handleFilter = () => {
@@ -106,14 +99,14 @@ const KhataScreen: React.FC = () => {
 
   const renderHeader = () => (
     <View style={styles.summaryContainer}>
-      <View style={[styles.summaryCard, { backgroundColor: '#D1FAE5' }]}>
+      <View style={[styles.summaryCard, { backgroundColor: 'rgba(34, 197, 94, 0.15)' }]}>
         <Text style={[styles.summaryLabel, { color: COLORS.success }]}>To Receive</Text>
         <Text style={[styles.summaryValue, { color: COLORS.success }]}>
           Rs {totalToReceive.toLocaleString()}
         </Text>
       </View>
       <View style={styles.summaryGap} />
-      <View style={[styles.summaryCard, { backgroundColor: '#FEE2E2' }]}>
+      <View style={[styles.summaryCard, { backgroundColor: 'rgba(239, 68, 68, 0.15)' }]}>
         <Text style={[styles.summaryLabel, { color: COLORS.error }]}>To Pay</Text>
         <Text style={[styles.summaryValue, { color: COLORS.error }]}>
           Rs {totalToPay.toLocaleString()}
@@ -122,16 +115,32 @@ const KhataScreen: React.FC = () => {
     </View>
   );
 
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <Header
+          title="Khata"
+          subtitle={currentDate}
+          showBack={true}
+          onBackPress={handleBackPress}
+        />
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={COLORS.cardBlue} />
+        </View>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
-      <Header 
-        title="Khata" 
-        subtitle={currentDate} 
+      <Header
+        title="Khata"
+        subtitle={currentDate}
         count={filteredCustomers.length}
         showBack={true}
         onBackPress={handleBackPress}
       />
-      
+
       <SearchBar
         value={searchQuery}
         onChangeText={setSearchQuery}
@@ -150,6 +159,12 @@ const KhataScreen: React.FC = () => {
       />
 
       <FAB onPress={handleAddCustomer} />
+
+      <AddCustomerModal
+        visible={isModalVisible}
+        onClose={() => setIsModalVisible(false)}
+        onSave={handleSaveCustomer}
+      />
     </View>
   );
 };
@@ -158,6 +173,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.background,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   summaryContainer: {
     flexDirection: 'row',
@@ -184,6 +204,7 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingBottom: 120,
+    flexGrow: 1,
   },
   emptyContainer: {
     flex: 1,

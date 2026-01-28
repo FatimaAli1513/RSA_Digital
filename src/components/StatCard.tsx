@@ -34,12 +34,12 @@ const styles = StyleSheet.create({
   value: {
     fontSize: SIZES.h2,
     fontWeight: 'bold',
-    color: COLORS.gray800,
+    color: COLORS.white,
     marginBottom: 4,
   },
   label: {
     fontSize: SIZES.caption,
-    color: COLORS.gray600,
+    color: COLORS.gray300,
   },
 });
 

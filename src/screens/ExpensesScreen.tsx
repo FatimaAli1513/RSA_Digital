@@ -1,11 +1,12 @@
-import React, { useState, useMemo } from 'react';
-import { View, StyleSheet, FlatList, Text, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React, { useState, useMemo, useCallback } from 'react';
+import { View, StyleSheet, FlatList, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
-import { Header, SearchBar, ExpenseCard, FAB } from '../components';
+import { Header, SearchBar, ExpenseCard, FAB, AddExpenseModal } from '../components';
 import { COLORS, SIZES, SHADOWS } from '../constants/theme';
 import { Expense } from '../types';
+import { getExpenses, addExpense } from '../utils/storage';
 
 type RootStackParamList = {
   Home: undefined;
@@ -16,40 +17,12 @@ type RootStackParamList = {
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-const CATEGORIES = ['Food', 'Transport', 'Shopping', 'Bills', 'Entertainment', 'Health', 'Education', 'Other'];
-
-// Generate sample expenses
-const generateSampleExpenses = (): Expense[] => {
-  const titles = [
-    'Grocery Shopping', 'Petrol', 'Restaurant', 'Electricity Bill',
-    'Movie Tickets', 'Medicine', 'Books', 'Clothes Shopping',
-    'Mobile Recharge', 'Internet Bill', 'Gas Bill', 'Lunch',
-    'Uber Ride', 'Coffee', 'Gym Membership', 'Haircut',
-  ];
-  
-  const expenses: Expense[] = [];
-  for (let i = 0; i < 100; i++) {
-    const randomDays = Math.floor(Math.random() * 365);
-    const date = new Date();
-    date.setDate(date.getDate() - randomDays);
-    
-    expenses.push({
-      id: `expense-${i}`,
-      title: titles[i % titles.length],
-      amount: Math.floor(Math.random() * 10000) + 100,
-      category: CATEGORIES[Math.floor(Math.random() * CATEGORIES.length)],
-      date,
-      description: 'Sample expense description',
-    });
-  }
-  
-  return expenses.sort((a, b) => b.date.getTime() - a.date.getTime());
-};
-
 const ExpensesScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
   const [searchQuery, setSearchQuery] = useState('');
-  const [expenses] = useState<Expense[]>(generateSampleExpenses());
+  const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const currentDate = new Date().toLocaleDateString('en-US', {
     weekday: 'long',
@@ -57,6 +30,19 @@ const ExpensesScreen: React.FC = () => {
     month: 'short',
     year: 'numeric',
   });
+
+  const loadExpenses = useCallback(async () => {
+    setIsLoading(true);
+    const storedExpenses = await getExpenses();
+    setExpenses(storedExpenses);
+    setIsLoading(false);
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadExpenses();
+    }, [loadExpenses])
+  );
 
   const filteredExpenses = useMemo(() => {
     if (!searchQuery.trim()) return expenses;
@@ -77,7 +63,12 @@ const ExpensesScreen: React.FC = () => {
   };
 
   const handleAddExpense = () => {
-    console.log('Add expense pressed');
+    setIsModalVisible(true);
+  };
+
+  const handleSaveExpense = async (title: string, amount: number, category: string, description?: string) => {
+    const newExpense = await addExpense({ title, amount, category, description });
+    setExpenses((prev) => [newExpense, ...prev]);
   };
 
   const handleViewInsights = () => {
@@ -109,9 +100,9 @@ const ExpensesScreen: React.FC = () => {
         <Text style={styles.totalLabel}>Total Expenses</Text>
         <Text style={styles.totalValue}>Rs {totalExpense.toLocaleString()}</Text>
       </View>
-      
-      <TouchableOpacity 
-        style={styles.insightsButton} 
+
+      <TouchableOpacity
+        style={styles.insightsButton}
         onPress={handleViewInsights}
         accessibilityLabel="View expense insights"
         accessibilityRole="button"
@@ -122,16 +113,32 @@ const ExpensesScreen: React.FC = () => {
     </View>
   );
 
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <Header
+          title="Expenses"
+          subtitle={currentDate}
+          showBack={true}
+          onBackPress={handleBackPress}
+        />
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={COLORS.cardBlue} />
+        </View>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
-      <Header 
-        title="Expenses" 
-        subtitle={currentDate} 
+      <Header
+        title="Expenses"
+        subtitle={currentDate}
         count={filteredExpenses.length}
         showBack={true}
         onBackPress={handleBackPress}
       />
-      
+
       <SearchBar
         value={searchQuery}
         onChangeText={setSearchQuery}
@@ -150,6 +157,12 @@ const ExpensesScreen: React.FC = () => {
       />
 
       <FAB onPress={handleAddExpense} />
+
+      <AddExpenseModal
+        visible={isModalVisible}
+        onClose={() => setIsModalVisible(false)}
+        onSave={handleSaveExpense}
+      />
     </View>
   );
 };
@@ -158,6 +171,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.background,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   headerContainer: {
     paddingHorizontal: SIZES.padding,
@@ -199,6 +217,7 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingBottom: 120,
+    flexGrow: 1,
   },
   emptyContainer: {
     flex: 1,

@@ -6,3 +6,6 @@ export { default as StatCard } from './StatCard';
 export { default as FAB } from './FAB';
 export { default as CustomerCard } from './CustomerCard';
 export { default as ExpenseCard } from './ExpenseCard';
+export { default as AddNoteModal } from './AddNoteModal';
+export { default as AddCustomerModal } from './AddCustomerModal';
+export { default as AddExpenseModal } from './AddExpenseModal';
