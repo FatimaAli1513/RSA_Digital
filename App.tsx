@@ -9,6 +9,7 @@ import HomeScreen from './src/screens/HomeScreen';
 import NotesScreen from './src/screens/NotesScreen';
 import KhataScreen from './src/screens/KhataScreen';
 import ExpensesScreen from './src/screens/ExpensesScreen';
+import AllActivitiesScreen from './src/screens/AllActivitiesScreen';
 
 // Types
 export type RootStackParamList = {
@@ -16,6 +17,7 @@ export type RootStackParamList = {
   Notes: undefined;
   Khata: undefined;
   Expenses: undefined;
+  AllActivities: undefined;
   Profile: undefined;
 };
 
@@ -36,6 +38,7 @@ const App: React.FC = () => {
           <Stack.Screen name="Notes" component={NotesScreen} />
           <Stack.Screen name="Khata" component={KhataScreen} />
           <Stack.Screen name="Expenses" component={ExpensesScreen} />
+          <Stack.Screen name="AllActivities" component={AllActivitiesScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>

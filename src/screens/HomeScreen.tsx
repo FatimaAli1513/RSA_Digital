@@ -13,6 +13,7 @@ type RootStackParamList = {
   Notes: undefined;
   Khata: undefined;
   Expenses: undefined;
+  AllActivities: undefined;
 };
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -140,7 +141,7 @@ const HomeScreen: React.FC = () => {
   };
 
   const handleViewAll = () => {
-    console.log('View all pressed');
+    navigation.navigate('AllActivities');
   };
 
   const handleActivityPress = (activity: RecentActivity) => {
