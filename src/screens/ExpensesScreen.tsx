@@ -5,7 +5,14 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 import { Header, SearchBar, ExpenseCard, FAB } from '../components';
 import { COLORS, SIZES, SHADOWS } from '../constants/theme';
-import { Expense, RootStackParamList } from '../types';
+import { Expense } from '../types';
+
+type RootStackParamList = {
+  Home: undefined;
+  Notes: undefined;
+  Khata: undefined;
+  Expenses: undefined;
+};
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -66,19 +73,23 @@ const ExpensesScreen: React.FC = () => {
   }, [expenses]);
 
   const handleExpensePress = (expense: Expense) => {
-    navigation.navigate('AddExpense', { expense });
+    console.log('Expense pressed:', expense.title);
   };
 
   const handleAddExpense = () => {
-    navigation.navigate('AddExpense');
+    console.log('Add expense pressed');
   };
 
   const handleViewInsights = () => {
-    navigation.navigate('ExpenseInsights');
+    console.log('View insights pressed');
   };
 
   const handleFilter = () => {
     console.log('Filter pressed');
+  };
+
+  const handleBackPress = () => {
+    navigation.goBack();
   };
 
   const renderExpense = ({ item }: { item: Expense }) => (
@@ -116,7 +127,9 @@ const ExpensesScreen: React.FC = () => {
       <Header 
         title="Expenses" 
         subtitle={currentDate} 
-        count={filteredExpenses.length} 
+        count={filteredExpenses.length}
+        showBack={true}
+        onBackPress={handleBackPress}
       />
       
       <SearchBar

@@ -4,7 +4,14 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Header, SearchBar, CustomerCard, FAB } from '../components';
 import { COLORS, SIZES } from '../constants/theme';
-import { Customer, RootStackParamList } from '../types';
+import { Customer } from '../types';
+
+type RootStackParamList = {
+  Home: undefined;
+  Notes: undefined;
+  Khata: undefined;
+  Expenses: undefined;
+};
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -71,15 +78,19 @@ const KhataScreen: React.FC = () => {
   }, [customers]);
 
   const handleCustomerPress = (customer: Customer) => {
-    navigation.navigate('CustomerDetail', { customer });
+    console.log('Customer pressed:', customer.name);
   };
 
   const handleAddCustomer = () => {
-    navigation.navigate('AddCustomer');
+    console.log('Add customer pressed');
   };
 
   const handleFilter = () => {
     console.log('Filter pressed');
+  };
+
+  const handleBackPress = () => {
+    navigation.goBack();
   };
 
   const renderCustomer = ({ item }: { item: Customer }) => (
@@ -116,7 +127,9 @@ const KhataScreen: React.FC = () => {
       <Header 
         title="Khata" 
         subtitle={currentDate} 
-        count={filteredCustomers.length} 
+        count={filteredCustomers.length}
+        showBack={true}
+        onBackPress={handleBackPress}
       />
       
       <SearchBar

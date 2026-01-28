@@ -5,7 +5,14 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 import { Header, QuickActionCard, StatCard } from '../components';
 import { COLORS, SIZES, SHADOWS } from '../constants/theme';
-import { RootStackParamList } from '../types';
+
+type RootStackParamList = {
+  Home: undefined;
+  Notes: undefined;
+  Khata: undefined;
+  Expenses: undefined;
+  Profile: undefined;
+};
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -20,23 +27,25 @@ const HomeScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
 
   const handleNewNote = () => {
-    navigation.navigate('AddNote');
+    navigation.navigate('Notes');
   };
 
   const handleAddCustomer = () => {
-    navigation.navigate('AddCustomer');
+    navigation.navigate('Khata');
   };
 
   const handleDailyExpenses = () => {
-    navigation.navigate('AddExpense');
+    navigation.navigate('Expenses');
   };
 
   const handleViewProfile = () => {
-    // Navigate to profile tab
+    // Profile screen - can be added later
+    console.log('Profile pressed');
   };
 
   const handleViewAll = () => {
-    // Navigate to activities
+    // Navigate to activities - can be added later
+    console.log('View all pressed');
   };
 
   return (
@@ -205,7 +214,7 @@ const styles = StyleSheet.create({
     color: COLORS.gray400,
   },
   bottomPadding: {
-    height: 100,
+    height: 40,
   },
 });
 

@@ -4,7 +4,14 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Header, SearchBar, NoteCard, FAB } from '../components';
 import { COLORS, SIZES } from '../constants/theme';
-import { Note, RootStackParamList } from '../types';
+import { Note } from '../types';
+
+type RootStackParamList = {
+  Home: undefined;
+  Notes: undefined;
+  Khata: undefined;
+  Expenses: undefined;
+};
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -69,16 +76,19 @@ const NotesScreen: React.FC = () => {
   }, [notes, searchQuery]);
 
   const handleNotePress = (note: Note) => {
-    navigation.navigate('AddNote', { note });
+    console.log('Note pressed:', note.title);
   };
 
   const handleAddNote = () => {
-    navigation.navigate('AddNote');
+    console.log('Add note pressed');
   };
 
   const handleFilter = () => {
-    // Show filter options
     console.log('Filter pressed');
+  };
+
+  const handleBackPress = () => {
+    navigation.goBack();
   };
 
   const renderNote = ({ item }: { item: Note }) => (
@@ -97,7 +107,9 @@ const NotesScreen: React.FC = () => {
       <Header 
         title="Notes" 
         subtitle={currentDate} 
-        count={filteredNotes.length} 
+        count={filteredNotes.length}
+        showBack={true}
+        onBackPress={handleBackPress}
       />
       
       <SearchBar
